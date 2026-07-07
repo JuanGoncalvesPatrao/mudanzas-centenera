@@ -239,8 +239,14 @@
                   <button type="button" class="btn btn-sm btn-ghost-dark" data-zona-map>Ver en el mapa</button>
                 </div>
                 <div class="map-embed" data-lenis-prevent>
+                  <!-- El iframe se carga a demanda (script.js) para no gastar
+                       datos ni frenar el form en mobile si nadie usa el mapa -->
+                  <button type="button" class="map-placeholder" data-map-load>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-pin"/></svg>
+                    <span>Ver mapa de tu zona</span>
+                  </button>
                   <iframe title="Mapa de tu zona" data-map-frame loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                    src="https://maps.google.com/maps?q=Buenos%20Aires%2C%20Argentina&z=11&output=embed"></iframe>
+                    data-default-src="https://maps.google.com/maps?q=Buenos%20Aires%2C%20Argentina&z=11&output=embed" hidden></iframe>
                 </div>
                 <p class="zona-hint">Escribí tu barrio o dirección y tocá <strong>Ver en el mapa</strong> (o Enter) para ubicarla.</p>
               </div>

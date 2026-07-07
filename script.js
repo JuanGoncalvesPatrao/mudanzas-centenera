@@ -82,13 +82,24 @@
      HEADER: fondo sólido al scrollear
      ====================================================================== */
   const header = $('[data-header]');
+  // El FAB lleva al presupuesto: se esconde mientras el form está en pantalla
+  // para no tapar el botón de envío ni el mapa (crítico en mobile).
+  let formEnVista = false;
   const onScroll = () => {
     header.toggleAttribute('data-scrolled', window.scrollY > 40);
     const fab = $('[data-fab]');
-    if (fab) fab.toggleAttribute('data-visible', window.scrollY > 500);
+    if (fab) fab.toggleAttribute('data-visible', window.scrollY > 500 && !formEnVista);
   };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  const seccionForm = $('#servicios');
+  if (seccionForm && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      formEnVista = entries[0].isIntersecting;
+      onScroll();
+    }, { rootMargin: '-15% 0px -15% 0px' }).observe(seccionForm);
+  }
 
   /* ======================================================================
      NAV MÓVIL
@@ -138,6 +149,9 @@
     if (!v) return;
     seleccion = v;
     fillSummary(v);
+    // En el carrusel mobile, centra la card elegida sin mover el scroll vertical
+    const card = e.target.closest('.vehicle');
+    if (card) card.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
     if (panel.hidden) {
       panel.hidden = false;
       // llevar el foco al primer campo, sin saltar bruscamente
@@ -149,18 +163,31 @@
      MAPA DE LA ZONA (Google Maps embebido, sin API key)
      ====================================================================== */
   const mapFrame = $('[data-map-frame]');
+  const mapPlaceholder = $('[data-map-load]');
   const zonaMapBtn = $('[data-zona-map]');
   const zonaInput = $('#q-zona');
+
+  // El iframe recién carga cuando el usuario lo pide: en mobile evita
+  // descargar ~1 MB de mapa en medio del paso de conversión.
+  const mostrarMapa = (src) => {
+    if (!mapFrame) return;
+    mapFrame.src = src;
+    mapFrame.hidden = false;
+    if (mapPlaceholder) mapPlaceholder.hidden = true;
+  };
 
   const actualizarMapa = () => {
     const q = zonaInput.value.trim();
     if (!q || !mapFrame) return;
     // Sesgamos la búsqueda a Buenos Aires para acertar el barrio correcto
     const query = encodeURIComponent(`${q}, Buenos Aires, Argentina`);
-    mapFrame.src = `https://maps.google.com/maps?q=${query}&z=14&output=embed`;
+    mostrarMapa(`https://maps.google.com/maps?q=${query}&z=14&output=embed`);
   };
 
   if (mapFrame && zonaMapBtn) {
+    if (mapPlaceholder) {
+      mapPlaceholder.addEventListener('click', () => mostrarMapa(mapFrame.dataset.defaultSrc));
+    }
     zonaMapBtn.addEventListener('click', actualizarMapa);
     zonaInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); actualizarMapa(); } // evita enviar el form

@@ -327,6 +327,12 @@ p { text-wrap: pretty; }
   border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--line-strong);
   background: var(--surface-2); box-shadow: var(--sh-1); }
 .map-embed iframe { width: 100%; height: 100%; border: 0; display: block; }
+.map-placeholder { position: absolute; inset: 0; width: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .5rem; border: 0; cursor: pointer;
+  background: var(--surface-2); color: var(--ink-soft); font: inherit; font-weight: 600;
+  font-size: var(--step--1); transition: background-color .2s, color .2s; }
+.map-placeholder:hover { background: var(--surface); color: var(--brand-600); }
+.map-placeholder svg { width: 30px; height: 30px; }
 .zona-hint { font-size: .78rem; color: var(--ink-soft); margin-top: .4rem; }
 @media (max-width: 480px) {
   .zona-input { flex-direction: column; }
