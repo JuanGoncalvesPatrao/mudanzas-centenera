@@ -457,10 +457,9 @@ p { text-wrap: pretty; }
    El var() con fallback en 1 garantiza que, sin JS, todo se vea normal. */
 .reveal {
   opacity: var(--reveal-p, 1);
-  transform: translateY(calc((1 - var(--reveal-p, 1)) * 24px));
-  /* Suavizado mínimo entre frames (no una animación): limpia el micro-escalón
-     de un update de scroll a otro sin introducir demora perceptible. */
-  transition: opacity .09s linear, transform .09s linear;
+  transform: translateY(calc((1 - var(--reveal-p, 1)) * 34px));
+  /* Sin transition: la inercia (lerp cuadro a cuadro) ya la aplica script.js;
+     una transition CSS encima duplicaría el suavizado y generaría lag. */
   will-change: opacity, transform;
 }
 

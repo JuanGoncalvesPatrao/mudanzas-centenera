@@ -344,18 +344,16 @@
   }
 
   /* ======================================================================
-     REVEAL LIGADO AL SCROLL (scrubbed)
+     REVEAL LIGADO AL SCROLL (scrubbed + inercia)
      ====================================================================== */
-  // En vez de "on/off" por umbral, cada elemento tiene un progreso 0→1
-  // que depende pura y directamente de su posición en pantalla. Se
-  // recalcula en cada frame de scroll (el mismo loop de Lenis cuando está
-  // activo), así que la revelación avanza exactamente al ritmo del dedo
-  // o de la ruedita, nunca "de golpe".
+  // Progreso continuo 0→1 según la posición de cada elemento en pantalla,
+  // pero el valor que se pinta no salta directo al valor real calculado:
+  // lo "persigue" con inercia (lerp) cuadro a cuadro. Eso es lo que da la
+  // sensación fluida en vez de un dial rígido calcado al scroll.
   const reveals = $$('.reveal');
   if (reveals.length && !prefersReduced()) {
     // Stagger natural: si varios reveals comparten fila (beneficios,
-    // testimonios), cada uno completa su progreso un poco más tarde que
-    // el anterior, sin depender de transition-delay.
+    // testimonios), cada uno completa su progreso un poco más tarde.
     const grupos = new Map();
     reveals.forEach((el) => {
       const lista = grupos.get(el.parentElement) || [];
@@ -363,37 +361,41 @@
       grupos.set(el.parentElement, lista);
     });
     grupos.forEach((lista) => {
-      if (lista.length > 1) lista.forEach((el, i) => { el.dataset.staggerPx = String(i * 55); });
+      if (lista.length > 1) lista.forEach((el, i) => { el.dataset.staggerPx = String(i * 70); });
     });
 
-    const START_VH = 0.94; // progreso 0: el borde superior recién entra por abajo
-    const END_VH = 0.6;    // progreso 1: el borde superior llega a esta altura
+    const START_VH = 1.0;  // progreso objetivo 0: el borde superior toca el fondo de pantalla
+    const END_VH = 0.32;   // progreso objetivo 1: recién al llegar a un tercio de la pantalla
+    const SUAVIZADO = 0.055; // más chico = persecución más lenta y perezosa (más fluida)
 
-    const actualizarReveals = () => {
+    const estado = reveals.map((el) => ({ el, offset: 0, current: -1, target: 0 }));
+
+    const calcularTarget = (item) => {
       const vh = window.innerHeight;
       const start = vh * START_VH;
       const end = vh * END_VH;
-      reveals.forEach((el) => {
-        const offset = Number(el.dataset.staggerPx || 0);
-        const top = el.getBoundingClientRect().top - offset;
-        const p = Math.min(1, Math.max(0, (start - top) / (start - end)));
-        el.style.setProperty('--reveal-p', p.toFixed(3));
-      });
+      const offset = Number(item.el.dataset.staggerPx || 0);
+      const top = item.el.getBoundingClientRect().top - offset;
+      return Math.min(1, Math.max(0, (start - top) / (start - end)));
     };
 
-    actualizarReveals(); // estado correcto ya desde el primer pintado, sin flash
+    // Estado inicial exacto (sin lerp) para que no haya flash al pintar
+    estado.forEach((item) => {
+      item.current = calcularTarget(item);
+      item.el.style.setProperty('--reveal-p', item.current.toFixed(3));
+    });
 
-    if (lenis) {
-      lenis.on('scroll', actualizarReveals);
-    } else {
-      let ticking = false;
-      window.addEventListener('scroll', () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => { actualizarReveals(); ticking = false; });
-      }, { passive: true });
-    }
-    window.addEventListener('resize', actualizarReveals);
+    const tick = () => {
+      estado.forEach((item) => {
+        item.target = calcularTarget(item);
+        const delta = item.target - item.current;
+        item.current += delta * SUAVIZADO;
+        if (Math.abs(delta) < 0.0006) item.current = item.target;
+        item.el.style.setProperty('--reveal-p', item.current.toFixed(3));
+      });
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   }
 
   /* ---------------------------------------------------------------------- */
