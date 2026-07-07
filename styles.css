@@ -532,16 +532,16 @@ p { text-wrap: pretty; }
   .vehicle-grid {
     display: flex; gap: .7rem;
     overflow-x: auto; scroll-snap-type: x mandatory;
-    scroll-padding-left: .9rem;
     padding: .5rem .9rem 1rem; margin: 0 -.9rem;
     scrollbar-width: none; -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
   }
   .vehicle-grid::-webkit-scrollbar { display: none; }
   .vehicle { flex: 0 0 76%; max-width: 250px; scroll-snap-align: center; }
-  /* Espaciador final: sin esto la última card (5 ambientes) no puede
-     acomodarse al frente y queda cortada contra el borde derecho */
-  .vehicle-grid::after { content: ""; flex: 0 0 24%; }
+  /* Espaciador final generoso: da el recorrido extra que necesita la
+     última card (5 ambientes) para llegar al centro; el snap obligatorio
+     evita que el scroll descanse en el vacío */
+  .vehicle-grid::after { content: ""; flex: 0 0 45%; }
   .vehicle label { padding: 1rem; }
   .vehicle label:hover { transform: none; }   /* sin lift en táctil */
 
