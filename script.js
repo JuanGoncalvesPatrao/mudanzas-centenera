@@ -344,30 +344,56 @@
   }
 
   /* ======================================================================
-     REVEAL ON SCROLL
+     REVEAL LIGADO AL SCROLL (scrubbed)
      ====================================================================== */
-  // "Armamos" (ocultamos) cada sección de forma síncrona, ANTES de que el
-  // usuario llegue a verla, y recién ahí observamos. Lo que ya está a la
-  // vista al cargar la página (o si el navegador no soporta IO) queda
-  // visible directamente, para no generar ningún parpadeo.
+  // En vez de "on/off" por umbral, cada elemento tiene un progreso 0→1
+  // que depende pura y directamente de su posición en pantalla. Se
+  // recalcula en cada frame de scroll (el mismo loop de Lenis cuando está
+  // activo), así que la revelación avanza exactamente al ritmo del dedo
+  // o de la ruedita, nunca "de golpe".
   const reveals = $$('.reveal');
-  if ('IntersectionObserver' in window && !prefersReduced()) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.remove('reveal-armed');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
-
+  if (reveals.length && !prefersReduced()) {
+    // Stagger natural: si varios reveals comparten fila (beneficios,
+    // testimonios), cada uno completa su progreso un poco más tarde que
+    // el anterior, sin depender de transition-delay.
+    const grupos = new Map();
     reveals.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      const yaVisible = rect.top < window.innerHeight && rect.bottom > 0;
-      if (yaVisible) return; // ya está a la vista: sin animación, sin riesgo de flash
-      el.classList.add('reveal-armed');
-      io.observe(el);
+      const lista = grupos.get(el.parentElement) || [];
+      lista.push(el);
+      grupos.set(el.parentElement, lista);
     });
+    grupos.forEach((lista) => {
+      if (lista.length > 1) lista.forEach((el, i) => { el.dataset.staggerPx = String(i * 55); });
+    });
+
+    const START_VH = 0.94; // progreso 0: el borde superior recién entra por abajo
+    const END_VH = 0.6;    // progreso 1: el borde superior llega a esta altura
+
+    const actualizarReveals = () => {
+      const vh = window.innerHeight;
+      const start = vh * START_VH;
+      const end = vh * END_VH;
+      reveals.forEach((el) => {
+        const offset = Number(el.dataset.staggerPx || 0);
+        const top = el.getBoundingClientRect().top - offset;
+        const p = Math.min(1, Math.max(0, (start - top) / (start - end)));
+        el.style.setProperty('--reveal-p', p.toFixed(3));
+      });
+    };
+
+    actualizarReveals(); // estado correcto ya desde el primer pintado, sin flash
+
+    if (lenis) {
+      lenis.on('scroll', actualizarReveals);
+    } else {
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { actualizarReveals(); ticking = false; });
+      }, { passive: true });
+    }
+    window.addEventListener('resize', actualizarReveals);
   }
 
   /* ---------------------------------------------------------------------- */

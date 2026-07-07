@@ -448,25 +448,21 @@ p { text-wrap: pretty; }
 /* ==========================================================================
    MOTION / REVEAL
    ========================================================================== */
-/* Patrón "armar y soltar", con TRANSITION (no animation):
-   - Por defecto .reveal está totalmente visible (si JS no corre, no pasa nada raro).
-   - script.js agrega .reveal-armed de forma síncrona antes del primer pintado,
-     solo a lo que está fuera de pantalla (el hero no lleva esta clase).
-   - Al entrar al viewport, se saca .reveal-armed: como es una transición
-     (no una animación con keyframes), interpola suave desde donde esté el
-     elemento en ese instante, sin el salto "visible -> invisible -> visible"
-     que da sensación de bug.
-*/
+/* Reveal ligado al scroll (scrubbed), no por umbral on/off:
+   script.js calcula en cada frame, según la posición real del elemento en
+   pantalla, un progreso 0→1 y lo escribe en --reveal-p. La opacidad y el
+   desplazamiento son función directa de ese progreso, así que se mueven
+   exactamente al ritmo del scroll (enganchado al mismo loop de Lenis),
+   sin transiciones de duración fija que puedan sentirse como un salto.
+   El var() con fallback en 1 garantiza que, sin JS, todo se vea normal. */
 .reveal {
-  transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
-  transition-delay: var(--reveal-delay, 0s);
+  opacity: var(--reveal-p, 1);
+  transform: translateY(calc((1 - var(--reveal-p, 1)) * 24px));
+  /* Suavizado mínimo entre frames (no una animación): limpia el micro-escalón
+     de un update de scroll a otro sin introducir demora perceptible. */
+  transition: opacity .09s linear, transform .09s linear;
+  will-change: opacity, transform;
 }
-.reveal.reveal-armed { opacity: 0; transform: translateY(22px); }
-
-/* Cascada suave dentro de grupos */
-.benefit-grid .reveal:nth-child(2), .testimonials .reveal:nth-child(2) { --reveal-delay: .08s; }
-.benefit-grid .reveal:nth-child(3), .testimonials .reveal:nth-child(3) { --reveal-delay: .16s; }
-.benefit-grid .reveal:nth-child(4) { --reveal-delay: .24s; }
 
 @keyframes slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
