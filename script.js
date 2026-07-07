@@ -88,6 +88,17 @@
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
+  /* ----- Botón flotante de WhatsApp: mismo criterio que en Dameky -----
+     aparece recién cuando el hero deja de estar a la vista, no por un
+     scrollY fijo. */
+  const waFloat = $('[data-fab]');
+  const heroEl = $('.hero');
+  if (waFloat && heroEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      waFloat.classList.toggle('visible', !entry.isIntersecting);
+    }, { threshold: 0 }).observe(heroEl);
+  }
+
   /* ======================================================================
      NAV MÓVIL
      ====================================================================== */
@@ -312,6 +323,12 @@
      real, con ícono y color correctos. */
   if (CONFIG.whatsapp) {
     const waUrl = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent('Hola Fabián, quiero consultar por una mudanza.')}`;
+
+    if (waFloat) {
+      waFloat.href = waUrl;
+      waFloat.target = '_blank';
+      waFloat.rel = 'noopener';
+    }
 
     const waFooter = $('[data-whatsapp-footer]');
     if (waFooter) {

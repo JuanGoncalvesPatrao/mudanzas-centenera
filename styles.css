@@ -436,6 +436,40 @@ p { text-wrap: pretty; }
   padding-top: 1.5rem; font-size: .8rem; color: oklch(0.78 0.01 250 / .7); }
 
 /* ==========================================================================
+   FLOATING WHATSAPP — calcado de la landing de Dameky (mismo ícono oficial,
+   misma animación de pulso y mismo criterio: aparece al salir del hero).
+   Color adaptado al verde real de WhatsApp en vez del cian de Dameky.
+   ========================================================================== */
+.wa-float {
+  position: fixed; bottom: 10vh; right: 1.4rem; z-index: var(--z-fab);
+  width: 52px; height: 52px;
+  background: var(--whatsapp); border-radius: 50%; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  opacity: 0; pointer-events: none;
+  transform: scale(0.8);
+  animation: none;
+  transition: opacity .4s ease, transform .4s ease, background-color .2s;
+}
+.wa-float.visible {
+  opacity: 1; pointer-events: all;
+  transform: scale(1);
+  animation: wa-pulse 2.8s ease-out infinite;
+}
+.wa-float:hover {
+  background: var(--whatsapp-600);
+  transform: scale(1.12);
+  animation: none;
+  box-shadow: 0 0 0 8px rgba(37,211,102,.15), 0 6px 24px rgba(37,211,102,.45);
+}
+.wa-float svg { width: 27px; height: 27px; flex-shrink: 0; }
+@keyframes wa-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(37,211,102,.55), 0 4px 16px rgba(0,0,0,.22); }
+  65%  { box-shadow: 0 0 0 16px rgba(37,211,102,0), 0 4px 16px rgba(0,0,0,.22); }
+  100% { box-shadow: 0 0 0 0 rgba(37,211,102,0), 0 4px 16px rgba(0,0,0,.22); }
+}
+
+/* ==========================================================================
    MOTION / REVEAL
    ========================================================================== */
 /* Reveal ligado al scroll (scrubbed), no por umbral on/off:
