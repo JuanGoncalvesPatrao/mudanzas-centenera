@@ -151,6 +151,18 @@ p { text-wrap: pretty; }
 .nav-menu > li > a:not(.btn):hover { opacity: .7; }
 .nav-cta .btn { color: var(--accent-ink); }
 
+/* Evita la marca duplicada: sobre el hero (que ya muestra el logo script),
+   el nombre del header se oculta y reaparece al scrollear */
+.site-header:not([data-scrolled]) .brand-name { opacity: 0; }
+.brand-name { transition: opacity .3s var(--ease-out); }
+
+/* Tap-to-call: solo visible en mobile */
+.header-call { display: none; width: 44px; height: 44px; border-radius: 12px;
+  place-items: center; color: #fff; transition: color .3s, background-color .2s; }
+.header-call svg { width: 21px; height: 21px; }
+.site-header[data-scrolled] .header-call { color: var(--ink); }
+.header-call:active { background: rgba(255,255,255,.15); }
+
 .nav-toggle { display: none; width: 44px; height: 44px; background: transparent; border: 0; position: relative; }
 .nav-toggle-bar, .nav-toggle-bar::before, .nav-toggle-bar::after {
   content: ""; position: absolute; left: 11px; width: 22px; height: 2.5px; border-radius: 2px;
@@ -231,6 +243,7 @@ p { text-wrap: pretty; }
 .vehicle-legend { display: block; width: 100%; padding: 0; font-family: var(--font-display);
   font-weight: 700; font-size: var(--step-0); color: var(--ink); margin-bottom: 1rem; }
 .vehicle-grid { display: grid; gap: .85rem; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); }
+.vehicle-swipe-hint { display: none; }
 
 .vehicle { position: relative; }
 .vehicle input { position: absolute; opacity: 0; pointer-events: none; }
@@ -344,6 +357,7 @@ p { text-wrap: pretty; }
 .coverage-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem 1.8rem; }
 .coverage-groups h3 { font-size: var(--step-0); color: var(--brand-600); margin-bottom: .25rem; }
 .coverage-groups p { font-size: var(--step--1); color: var(--ink-soft); }
+.coverage-cta { margin-top: 2rem; }
 
 .map-svg { width: 100%; max-width: 380px; margin-inline: auto; }
 .map-ring { fill: none; stroke: var(--brand); }
@@ -416,6 +430,9 @@ p { text-wrap: pretty; }
 .fab[data-visible] { transform: translateY(0); opacity: 1; }
 .fab:hover { background: var(--whatsapp-600); }
 .fab svg { width: 22px; height: 22px; }
+/* Variante presupuesto (sin WhatsApp configurado): ámbar, ícono de camión */
+.fab--quote { background: var(--accent); color: var(--accent-ink); }
+.fab--quote:hover { background: var(--accent-600); }
 
 /* ==========================================================================
    MOTION / REVEAL
@@ -459,6 +476,8 @@ p { text-wrap: pretty; }
 
 @media (max-width: 720px) {
   .nav-toggle { display: block; z-index: var(--z-nav); }
+  .header-call { display: grid; }
+  .nav { gap: .2rem; }
   .nav-menu {
     position: fixed; inset: 0 0 0 auto; width: min(300px, 82vw); z-index: var(--z-header);
     flex-direction: column; align-items: stretch; gap: .2rem;
@@ -492,7 +511,8 @@ p { text-wrap: pretty; }
 
   /* Vehículos como carrusel deslizable con snap */
   .vehicle-set { padding: 1.1rem .9rem 1.2rem; }
-  .vehicle-legend { font-size: var(--step--1); margin-bottom: .8rem; }
+  .vehicle-legend { font-size: var(--step--1); margin-bottom: .3rem; }
+  .vehicle-swipe-hint { display: block; font-size: .78rem; color: var(--ink-soft); margin-bottom: .5rem; }
   .vehicle-grid {
     display: flex; gap: .7rem;
     overflow-x: auto; scroll-snap-type: x mandatory;

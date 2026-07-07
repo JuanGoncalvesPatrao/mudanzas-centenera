@@ -63,6 +63,21 @@
     });
   }
 
+  /* Scroll unificado: si Lenis está activo, TODO el scroll pasa por él
+     (mezclar scrollIntoView nativo con Lenis produce tironeos). */
+  function scrollSuave(el, block = 'start') {
+    if (!el) return;
+    if (lenis) {
+      let offset = -80;
+      if (block === 'center') {
+        offset = -Math.max(80, (window.innerHeight - el.getBoundingClientRect().height) / 2);
+      }
+      lenis.scrollTo(el, { offset, duration: 1.1 });
+    } else {
+      el.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block });
+    }
+  }
+
   /* ======================================================================
      HEADER: fondo sólido al scrollear
      ====================================================================== */
@@ -126,9 +141,7 @@
     if (panel.hidden) {
       panel.hidden = false;
       // llevar el foco al primer campo, sin saltar bruscamente
-      requestAnimationFrame(() => {
-        panel.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'center' });
-      });
+      requestAnimationFrame(() => scrollSuave(panel, 'center'));
     }
   });
 
@@ -260,7 +273,7 @@
 
     panel.hidden = true;
     success.hidden = false;
-    requestAnimationFrame(() => success.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'center' }));
+    requestAnimationFrame(() => scrollSuave(success, 'center'));
   };
 
   $('[data-quote-reset]').addEventListener('click', () => {
@@ -271,13 +284,34 @@
     showError(nombre, false);
     showError(telefono, false);
     $$('input[name="vehiculo"]').forEach((r) => (r.checked = false));
-    $('#servicios').scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'start' });
+    scrollSuave($('#servicios'), 'start');
   });
 
-  /* ----- Link de WhatsApp del footer (si hay número) ----- */
-  const waFooter = $('[data-whatsapp-footer]');
-  if (waFooter && CONFIG.whatsapp) {
-    waFooter.href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent('Hola Fabián, quiero consultar por una mudanza.')}`;
+  /* ----- Modo WhatsApp (solo si hay número configurado) -----
+     Sin número: FAB ámbar "Pedir presupuesto" y footer "Presupuesto online".
+     Con número: ambos pasan a WhatsApp real, con ícono y color correctos. */
+  if (CONFIG.whatsapp) {
+    const waUrl = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent('Hola Fabián, quiero consultar por una mudanza.')}`;
+
+    const fab = $('[data-fab]');
+    if (fab) {
+      fab.href = waUrl;
+      fab.target = '_blank';
+      fab.rel = 'noopener';
+      fab.classList.remove('fab--quote');
+      fab.setAttribute('aria-label', 'Escribir por WhatsApp');
+      $('.fab-ico-quote', fab).hidden = true;
+      $('.fab-ico-wa', fab).hidden = false;
+      $('span', fab).textContent = 'WhatsApp';
+    }
+
+    const waFooter = $('[data-whatsapp-footer]');
+    if (waFooter) {
+      waFooter.href = waUrl;
+      waFooter.innerHTML = 'WhatsApp <em>Pedir presupuesto</em>';
+      const ico = $('[data-wa-ico]');
+      if (ico) ico.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-whatsapp"/></svg>';
+    }
   }
 
   /* ======================================================================
