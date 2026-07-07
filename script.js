@@ -1,11 +1,11 @@
 /* ==========================================================================
-   Transportes Fabián — lógica del prototipo
+   Mudanzas Centenera — lógica del prototipo
    ========================================================================== */
 (() => {
   'use strict';
 
   /* ----------------------------------------------------------------------
-     CONFIG — cuando tengas el WhatsApp de Fabián, poné el número acá
+     CONFIG — cuando tengas el WhatsApp del negocio, poné el número acá
      en formato internacional sin "+", espacios ni guiones.
      Ej: 5491123456789  (54 = Arg, 9 = celular, 11 = CABA, resto el número)
      Dejalo en '' para que el sitio funcione sin WhatsApp.
@@ -15,7 +15,7 @@
   };
 
   // Clave compartida con el panel de administración (admin.js)
-  const STORAGE_KEY = 'tf_solicitudes';
+  const STORAGE_KEY = 'mc_solicitudes';
 
   /* ---------------------------------------------------------------------- */
   const $  = (s, c = document) => c.querySelector(s);
@@ -279,7 +279,7 @@
 
   const mensajeResumen = () => {
     const partes = [
-      `Hola Fabián, quiero un presupuesto para una mudanza.`,
+      `Hola Mudanzas Centenera, quiero un presupuesto para una mudanza.`,
       ``,
       `• Tamaño: ${seleccion.amb} (${seleccion.nombre})`,
       `• Nombre: ${nombre.value.trim()}`,
@@ -332,7 +332,7 @@
      Sin número: footer "Presupuesto online". Con número: pasa a WhatsApp
      real, con ícono y color correctos. */
   if (CONFIG.whatsapp) {
-    const waUrl = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent('Hola Fabián, quiero consultar por una mudanza.')}`;
+    const waUrl = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent('Hola Mudanzas Centenera, quiero consultar por una mudanza.')}`;
 
     if (waFloat) {
       waFloat.href = waUrl;

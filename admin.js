@@ -1,14 +1,14 @@
 /* ==========================================================================
-   Panel de solicitudes — Transportes Fabián
+   Panel de solicitudes — Mudanzas Centenera
    Lee las solicitudes guardadas por el formulario (localStorage) y las
    muestra en una tabla con WhatsApp por fila y exportación a CSV.
    ========================================================================== */
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'tf_solicitudes';           // misma clave que script.js
-  const SEED_FLAG = 'tf_seeded';                   // para no re-sembrar ejemplos
-  const WA_CONFIG_MSG = 'Hola! Te escribo por tu pedido de presupuesto de mudanza en Transportes Fabián.';
+  const STORAGE_KEY = 'mc_solicitudes';           // misma clave que script.js
+  const SEED_FLAG = 'mc_seeded';                   // para no re-sembrar ejemplos
+  const WA_CONFIG_MSG = 'Hola! Te escribo por tu pedido de presupuesto de mudanza en Mudanzas Centenera.';
 
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
@@ -181,7 +181,7 @@
     const filas = lista.map((l) => [
       fmtFecha(l.ts), fmtHora(l.ts), l.nombre, l.telefono, l.email, l.zona, l.vehiculo, l.ambientes
     ].map(csvCampo).join(';'));
-    descargar(`solicitudes-transportes-fabian-${hoy()}.csv`, [cab.join(';'), ...filas].join('\r\n'));
+    descargar(`solicitudes-mudanzas-centenera-${hoy()}.csv`, [cab.join(';'), ...filas].join('\r\n'));
   }
 
   function exportarEmails() {

@@ -1,4 +1,4 @@
-# Transportes Fabián — Prototipo funcional
+# Mudanzas Centenera — Prototipo funcional
 
 Landing de mudanzas y fletes (CABA y GBA). HTML + CSS + JS puro, sin build ni dependencias.
 
@@ -13,8 +13,8 @@ Doble clic en `index.html` (abre en el navegador). No necesita servidor ni insta
 
 ## Pendientes para dejarlo 100% (cuando tengas los datos)
 1. **WhatsApp**: en `script.js`, arriba de todo, poné el número en `CONFIG.whatsapp` (formato `5491123456789`). Al hacerlo se activa solo el botón de WhatsApp en la pantalla de éxito y en el footer.
-2. **Fotos reales**: los vehículos son ilustraciones SVG (sin marcas ajenas). Cuando tengas fotos de los camiones de Fabián, se reemplazan fácil.
-3. **Testimonios**: reemplazá los textos de ejemplo en la sección "25 años haciendo mudanzas" por reseñas reales.
+2. **Fotos reales**: los vehículos son ilustraciones SVG (sin marcas ajenas). Cuando tengas fotos de los camiones, se reemplazan fácil.
+3. **Testimonios**: reemplazá los textos de ejemplo en la sección "27 años haciendo mudanzas" por reseñas reales.
 4. **Datos de contacto**: teléfono, email y horarios en el footer son de ejemplo.
 5. **Backend del formulario**: hoy el envío muestra la pantalla de éxito (no manda mail). Para recibir los datos podés conectarlo a un servicio como Formspree, o al WhatsApp con el paso 1.
 
