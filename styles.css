@@ -54,6 +54,12 @@
   --z-header: 100; --z-fab: 90; --z-nav: 120;
 }
 
+/* ---------- Lenis (scroll suave) ---------- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; }
@@ -161,10 +167,10 @@ p { text-wrap: pretty; }
    ========================================================================== */
 .hero {
   position: relative; isolation: isolate;
-  min-height: min(88vh, 720px);
-  min-height: min(90svh, 720px);
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex; align-items: flex-end;
-  padding: clamp(100px, 18vh, 130px) 0 clamp(2.5rem, 6vw, 5.5rem);
+  padding: clamp(100px, 16vh, 150px) 0 clamp(2.5rem, 6vw, 5.5rem);
   color: #fff; overflow: hidden;
 }
 .hero-bg { position: absolute; inset: 0; z-index: -2;
@@ -414,8 +420,18 @@ p { text-wrap: pretty; }
 /* ==========================================================================
    MOTION / REVEAL
    ========================================================================== */
-.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
-.js .reveal.is-in { opacity: 1; transform: none; }
+.js .reveal {
+  opacity: 0; transform: translateY(30px); filter: blur(8px);
+  transition: opacity .9s var(--ease-out), transform .9s var(--ease-out), filter .9s var(--ease-out);
+  will-change: opacity, transform, filter;
+}
+.js .reveal.is-in { opacity: 1; transform: none; filter: none; }
+/* Cascada suave dentro de grupos */
+.js .benefit-grid .reveal:nth-child(2),
+.js .testimonials .reveal:nth-child(2) { transition-delay: .09s; }
+.js .benefit-grid .reveal:nth-child(3),
+.js .testimonials .reveal:nth-child(3) { transition-delay: .18s; }
+.js .benefit-grid .reveal:nth-child(4) { transition-delay: .27s; }
 @keyframes slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
 .js .hero-truck { animation: truck-in 1s var(--ease-out) both; }
@@ -427,7 +443,7 @@ p { text-wrap: pretty; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
     transition-duration: .001ms !important; }
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal { opacity: 1; transform: none; filter: none; }
 }
 
 /* ==========================================================================

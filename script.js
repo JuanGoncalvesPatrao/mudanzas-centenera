@@ -35,6 +35,35 @@
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ======================================================================
+     SCROLL SUAVE (Lenis) — con anclas fluidas
+     ====================================================================== */
+  let lenis = null;
+  if (window.Lenis && !prefersReduced()) {
+    lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // ease-out-expo, soft
+      smoothWheel: true,
+      // En táctil dejamos el scroll nativo (se siente mejor en el celu)
+      smoothTouch: false,
+      touchMultiplier: 1.6
+    });
+    const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+    requestAnimationFrame(raf);
+
+    // Anclas internas con desplazamiento suave y offset del header fijo
+    $$('a[href^="#"]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        if (!id || !id.startsWith('#') || id.length <= 1) return; // ignora links externos
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: -72, duration: 1.2 });
+      });
+    });
+  }
+
+  /* ======================================================================
      HEADER: fondo sólido al scrollear
      ====================================================================== */
   const header = $('[data-header]');
