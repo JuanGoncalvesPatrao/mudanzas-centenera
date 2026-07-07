@@ -441,14 +441,15 @@ p { text-wrap: pretty; }
 .fab {
   position: fixed; right: clamp(1rem, 3vw, 2rem); bottom: clamp(1rem, 3vw, 2rem); z-index: var(--z-fab);
   display: grid; place-items: center; width: 60px; height: 60px;
-  background: var(--whatsapp); color: #fff; border-radius: 50%; box-shadow: var(--sh-3);
+  /* El logo (imagen real, fondo transparente) YA es un anillo verde: si el
+     botón también fuera verde sólido, el anillo se camuflaría y desaparecería.
+     Fondo blanco simple para que el logo se lea nítido en cualquier sección. */
+  background: #fff; border-radius: 50%; box-shadow: var(--sh-3);
   transform: translateY(120%); opacity: 0; transition: transform .35s var(--ease-out), opacity .35s, background-color .2s;
 }
 .fab[data-visible] { transform: translateY(0); opacity: 1; }
-.fab:hover { background: var(--whatsapp-600); }
-/* El ícono nuevo es simétrico por construcción (burbuja + colita + puntitos
-   centrados en x=12): el centrado sale solo, sin nudges ni ajustes a ojo. */
-.fab svg { width: 32px; height: 32px; }
+.fab:hover { box-shadow: var(--sh-3), 0 0 0 3px oklch(0.68 0.17 150 / .25); }
+.fab img { width: 40px; height: 40px; display: block; }
 
 /* ==========================================================================
    MOTION / REVEAL
