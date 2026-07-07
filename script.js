@@ -89,14 +89,24 @@
   window.addEventListener('scroll', onScroll, { passive: true });
 
   /* ----- Botón flotante de WhatsApp: mismo criterio que en Dameky -----
-     aparece recién cuando el hero deja de estar a la vista, no por un
-     scrollY fijo. */
+     aparece recién cuando el hero deja de estar a la vista, y vuelve a
+     ocultarse sobre la sección del formulario (para no tapar el botón
+     de envío ni el mapa). */
   const waFloat = $('[data-fab]');
   const heroEl = $('.hero');
-  if (waFloat && heroEl && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([entry]) => {
-      waFloat.classList.toggle('visible', !entry.isIntersecting);
-    }, { threshold: 0 }).observe(heroEl);
+  const formEl = $('#servicios');
+  if (waFloat && 'IntersectionObserver' in window) {
+    const ocultarEn = new Set();
+    const actualizarWaFloat = () => waFloat.classList.toggle('visible', ocultarEn.size === 0);
+    const observarOcultamiento = (el, key) => {
+      if (!el) return;
+      new IntersectionObserver(([entry]) => {
+        entry.isIntersecting ? ocultarEn.add(key) : ocultarEn.delete(key);
+        actualizarWaFloat();
+      }, { threshold: 0 }).observe(el);
+    };
+    observarOcultamiento(heroEl, 'hero');
+    observarOcultamiento(formEl, 'form');
   }
 
   /* ======================================================================
