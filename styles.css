@@ -287,7 +287,11 @@ p { text-wrap: pretty; }
 /* Panel de resumen (barra horizontal) + contacto */
 .quote-panel {
   background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-lg);
-  overflow: hidden; box-shadow: var(--sh-2);
+  /* clip y NO hidden: al tocar una card, el foco del radio scrollea los
+     ancestros con overflow hidden y corria el panel entero de costado */
+  overflow: hidden;
+  overflow: clip;
+  box-shadow: var(--sh-2);
 }
 .quote-reveal { animation: slide-up .4s var(--ease-out) both; }
 .quote-summary {
