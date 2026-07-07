@@ -446,10 +446,9 @@ p { text-wrap: pretty; }
 }
 .fab[data-visible] { transform: translateY(0); opacity: 1; }
 .fab:hover { background: var(--whatsapp-600); }
-/* Centrado óptico (no solo matemático): la colita de la burbuja hacia
-   abajo-izquierda tira la percepción visual hacia ese lado, así que el
-   ícono se corrige un poco hacia arriba-derecha para que se LEA centrado. */
-.fab svg { width: 30px; height: 30px; transform: translate(0.4px, -1.2px); }
+/* El ícono nuevo es simétrico por construcción (burbuja + colita + puntitos
+   centrados en x=12): el centrado sale solo, sin nudges ni ajustes a ojo. */
+.fab svg { width: 32px; height: 32px; }
 
 /* ==========================================================================
    MOTION / REVEAL
