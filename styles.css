@@ -5,6 +5,10 @@
    ========================================================================== */
 
 :root {
+  /* Diseño solo en tema claro: evita que el navegador fuerce una inversión
+     automática de colores cuando el sistema está en modo oscuro. */
+  color-scheme: light;
+
   /* Paleta (OKLCH con fallback hex vía navegador moderno) */
   --bg:            oklch(0.995 0.003 250);
   --surface:       oklch(0.972 0.012 250);
